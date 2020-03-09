@@ -591,14 +591,14 @@ namespace Noise
       byval y as single, _
       byval size as single, _
       byval period as single, _
-      byval offsetX as single => 0.0!, _
-      byval offsetY as single => 0.0!, _
+      byval centerX as single => 0.0!, _
+      byval centerY as single => 0.0!, _
       byval bias as single => 0.0! ) _
     as single
     
     dim as single _
-      xp => ( x - offsetX ) / size, _
-      yp => ( y - offsetY ) / size, _
+      xp => ( x - centerX ) / size, _
+      yp => ( y - centerY ) / size, _
       dist => sqr( xp ^ 2 + yp ^ 2 ) + bias
     
     return( abs( sin( _
