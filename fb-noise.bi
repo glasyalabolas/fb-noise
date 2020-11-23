@@ -2,7 +2,7 @@
 #define __FB_NOISE_BI__
 
 namespace Noise
-  static as const ubyte perm( ... ) = { _
+  static as const ubyte PERM( ... ) = { _
     151,160,137, 91, 90, 15,131, 13,201, 95, 96, 53,194,233,  7,225, _
     140, 36,103, 30, 69,142,  8, 99, 37,240, 21, 10, 23,190,  6,148, _
     247,120,234, 75,  0, 26,197, 62, 94,252,219,203,117, 35, 11, 32, _
@@ -36,7 +36,7 @@ namespace Noise
     184, 84,204,176,115,121, 50, 45,127,  4,150,254,138,236,205, 93, _
     222,114, 67, 29, 24, 72,243,141,128,195, 78, 66,215, 61,156,180 }  
     
-  static as const integer grad2( 11, 1 ) = { _
+  static as const integer GRAD2( 11, 1 ) = { _
     { 1, 1 }, { -1,  1 }, { 1, -1 }, { -1, -1 }, _
     { 1, 0 }, { -1,  0 }, { 1,  0 }, { -1,  0 }, _
     { 0, 1 }, {  0, -1 }, { 0,  1 }, {  0, -1 } }
@@ -127,7 +127,7 @@ namespace Noise
     Remaps a value from one range into another
   '/
   private function remap( _
-    x as single, start1 as single, end1 as single, start2 as single, end2 as single ) _
+      x as single, start1 as single, end1 as single, start2 as single, end2 as single ) _
     as single
     
     return( ( x - start1 ) * ( end2 - start2 ) / ( end1 - start1 ) + start2 )
@@ -144,10 +144,8 @@ namespace Noise
       fractY = y - int( y )
     
     dim as integer _
-      x1 = int( x ), _
-      y1 = int( y ), _
-      x2 = int( x - 1.0f ), _
-      y2 = int( y - 1.0f )
+      x1 = int( x ), y1 = int( y ), _
+      x2 = int( x - 1.0f ), y2 = int( y - 1.0f )
     
     return( _
       fractX * fractY * noise2( x1, y1 ) + _
@@ -278,10 +276,7 @@ namespace Noise
     0 .. 1 range
   '/
   private function worley( _
-      x as integer, _
-      y as integer, _
-      size as integer, _
-      cellSize as single, _
+      x as integer, y as integer, size as integer, cellSize as single, _
       distanceFunc as function( _
         as single, as single, as single, as single ) as single = _
         @wn_dist_euclidean, _
@@ -293,8 +288,8 @@ namespace Noise
     
     dim as single _
       firstPoint = 2.0f * cellSize, _
-      secondPoint = 2.0f * cellSize, _
-      thirdPoint = 2.0f * cellSize, _
+      secondPoint = firstPoint, _
+      thirdPoint = firstPoint, _
       dist, xp, yp
     
     dim as integer _
@@ -337,12 +332,12 @@ namespace Noise
     
     -1 .. 1 range
   '/
-  const as single _
-    SN_F2 = 0.5f * ( sqr( 3.0f ) - 1.0f ), _
-    SN_G2 = ( 3.0f - sqr( 3.0f ) ) / 6.0f, _
-    SN_G22 = SN_G2 + SN_G2
-  
   private function simplex( x as single, y as single ) as single
+    static as const single _
+      SN_F2 = 0.5f * ( sqr( 3.0f ) - 1.0f ), _
+      SN_G2 = ( 3.0f - sqr( 3.0f ) ) / 6.0f
+    dim as single SN_G22 = SN_G2 * 2
+    
     dim as single s = ( x + y ) * SN_F2
     dim as integer _
       i = int( x + s ), _
@@ -357,11 +352,9 @@ namespace Noise
     j and= 255
     
     if( x0 > y0 ) then
-      i1 = 1
-      j1 = 0
+      i1 = 1 : j1 = 0
     else
-      i1 = 0
-      j1 = 1
+      i1 = 0 : j1 = 1
     end if
     
     dim as single _
@@ -370,9 +363,7 @@ namespace Noise
       x2 = x0 - 1.0f + SN_G22, _
       y2 = y0 - 1.0f + SN_G22
     dim as integer _
-      ii = i, _
-      jj = j, _
-      ind
+      ii = i, jj = j, ind
     dim as single n
     
     t = 0.5f - x0 * x0 - y0 * y0
@@ -380,18 +371,18 @@ namespace Noise
     if( t < 0.0f ) then
       n = 0.0f
     else
-      ind = perm( i + perm( j ) ) mod 12
-      n = t * t * t * t * ( grad2( ind, 0 ) * x0 + _
-        grad2( ind, 1 ) * y0 )
+      ind = PERM( i + PERM( j ) ) mod 12
+      n = t * t * t * t * ( GRAD2( ind, 0 ) * x0 + _
+        GRAD2( ind, 1 ) * y0 )
     end if
     
     t = 0.5f - x1 * x1 - y1 * y1
     
     if( t >= 0.0f ) then
-      ind = perm( i + i1 + perm( j + j1 ) ) mod 12
+      ind = PERM( i + i1 + PERM( j + j1 ) ) mod 12
       
-      n += t * t * t * t * ( grad2( ind, 0 ) * x1 + _
-        grad2( ind, 1 ) * y1 )
+      n += t * t * t * t * ( GRAD2( ind, 0 ) * x1 + _
+        GRAD2( ind, 1 ) * y1 )
     end if
     
     t = 0.5f - x2 * x2 - y2 * y2
@@ -399,9 +390,9 @@ namespace Noise
     if( t >= 0.0f ) then
       i += 1
       j += 1 
-      ind = perm( i + perm( j ) ) mod 12
-      n += t * t * t * t * ( grad2( ind, 0 ) * x2 + _
-        grad2( ind, 1 ) * y2 )
+      ind = PERM( i + PERM( j ) ) mod 12
+      n += t * t * t * t * ( GRAD2( ind, 0 ) * x2 + _
+        GRAD2( ind, 1 ) * y2 )
     end if
     
     return( 70.0f * n )
@@ -413,11 +404,8 @@ namespace Noise
     -1 .. 1 range
   '/
   private function sinePattern( _
-      x as single, _
-      y as single, _
-      size as single, _
-      xPeriod as single, _
-      yPeriod as single ) _
+      x as single, y as single, size as single, _
+      xPeriod as single, yPeriod as single ) _
     as single
     
     return( sin( ( x * xPeriod / size + y * yPeriod / size ) ) )
@@ -429,18 +417,15 @@ namespace Noise
     0 .. 1 range
   '/
   private function circularSinePattern( _
-      x as single, _
-      y as single, _
-      size as single, _
-      period as single, _
-      centerX as single = 0.0f, _
-      centerY as single = 0.0f, _
+      x as single, y as single, size as single, period as single, _
+      centerX as single = 0.0f, centerY as single = 0.0f, _
       bias as single = 0.0f ) _
     as single
     
     dim as single _
-      xp = ( x - centerX ) / size, _
-      yp = ( y - centerY ) / size, _
+      isize = 1.0f / size, _
+      xp = ( x - centerX ) * isize, _
+      yp = ( y - centerY ) * isize, _
       dist = sqr( xp ^ 2 + yp ^ 2 ) + bias
     
     return( abs( sin( 2.0f * period * dist ) ) )
@@ -452,13 +437,9 @@ namespace Noise
     0 .. 1 range
   '/
   private function blobbyPattern( _
-      x as single, _
-      y as single, _
-      size as single, _
-      xPeriod as single, _
-      yPeriod as single, _
-      xDisp as single = 0.0f, _
-      yDisp as single = 0.0f ) _
+      x as single, y as single, size as single, _
+      xPeriod as single, yPeriod as single, _
+      xDisp as single = 0.0f, yDisp as single = 0.0f ) _
     as single
     
     return( abs( _
@@ -475,8 +456,7 @@ namespace Noise
       x as single, y as single, sizeX as single, sizeY as single ) _
     as single
     
-    return( iif( ( _
-      int( x / sizeX ) + int( y / sizeY ) ) mod 2 = 1, _
+    return( iif( ( int( x / sizeX ) + int( y / sizeY ) ) and 1, _
       0.0f, 1.0f ) )
   end function
 end namespace
