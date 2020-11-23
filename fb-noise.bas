@@ -4,8 +4,7 @@
   Noise functions
 '/
 dim as integer _
-  w = 256, _
-  h = 256
+  w = 256, h = 256
 
 screenRes( w, h, 32 )
 

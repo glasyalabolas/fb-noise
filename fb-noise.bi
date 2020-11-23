@@ -44,10 +44,7 @@ namespace Noise
   /'
     -1 .. 1 range
   '/
-  private function noise1( _
-      byval x as integer ) _
-    as single
-    
+  private function noise1( x as integer ) as single
     x = ( x shl 13 ) xor x
     
     return( ( 1.0f - ( ( x * ( x * x * 15731 + 789221) + _
@@ -57,21 +54,14 @@ namespace Noise
   /'
     0 .. 1 range
   '/
-  private function noise1n( _
-      byval x as integer ) _
-    as single
-    
+  private function noise1n( x as integer ) as single
     return( ( noise1( x ) * 0.5f ) + 0.5f )
   end function
   
   /'
     -1 .. 1 range
   '/
-  private function noise2( _
-      byval x as integer, _
-      byval y as integer ) _
-    as single
-    
+  private function noise2( x as integer, y as integer ) as single
     dim as integer _
       n = x + y * 57
       n = ( n shl 13 ) xor n
@@ -83,60 +73,33 @@ namespace Noise
   /'
     0 .. 1 range
   '/
-  private function noise2n( _
-      byval x as integer, _
-      byval y as integer ) _
-    as single
-    
+  private function noise2n( x as integer, y as integer ) as single
     return( ( noise2( x, y ) * 0.5f ) + 0.5f )
   end function
   
   '' Floating-point modulus
-  private function fMod( _
-      byval n as single, _
-      byval d as single ) _
-    as single
-    
+  private function fMod( n as single, d as single ) as single
     return( n - int( n / d ) * d )
   end function
   
   '' Select the minimum of two values
-  private function fMin( _
-      byval a as single, _
-      byval b as single ) _
-    as single
-    
+  private function fMin( a as single, b as single ) as single
     return( iif( a < b, a, b ) )
   end function
   
   '' Select the maximum of two values
-  private function fMax( _
-      byval a as single, _
-      byval b as single ) _
-    as single
-    
+  private function fMax( byval a as single, b as single ) as single
     return( iif( a > b, a, b ) )
   end function
   
   '' Clamps a value 'v' between two limits, 'a' and 'b'
-  private function fClamp( _
-      byval v as single, _
-      byval a as single, _
-      byval b as single ) _
-    as single
-    
+  private function fClamp( v as single, a as single, b as single ) as single
     return( iif( a > v, a, iif( v < b, v, b ) ) )
   end function
   
   '' Wraps a value 'v' between two values, 'a' and 'b'
-  private function fWrap( _
-      byval v as single, _
-      byval a as single, _
-      byval b as single ) _
-    as single
-    
-    dim as single _
-      range = b - a
+  private function fWrap( v as single, a as single, b as single ) as single
+    dim as single range = b - a
     
     return( fMod( ( fMod( v - a, range ) + range ), range + a ) )
   end function
@@ -144,17 +107,11 @@ namespace Noise
   /'
     Floor and ceiling for floating-point values
   '/
-  private function floor( _
-      byval n as single ) _
-    as integer
-    
+  private function floor( n as single ) as integer
     return( ( n * 2.0f - 0.5f ) shr 1 )
   end function
   
-  private function ceil( _
-      byval n as single ) _
-    as integer
-    
+  private function ceil( n as single ) as integer
     return( ( - ( ( - ( n * 2.0f - 0.5f ) shr 1 ) ) ) )
   end function
   
@@ -162,10 +119,7 @@ namespace Noise
     Remaps a function in the -1 .. 1 range to the
     0 .. 1 range.
   '/
-  private function remap overload( _
-      byval v as single ) _
-    as single
-    
+  private function remap overload( v as single ) as single
     return( fClamp( v * 0.5f + 0.5f, 0.0f, 1.0f ) )
   end function
   
@@ -173,11 +127,7 @@ namespace Noise
     Remaps a value from one range into another
   '/
   private function remap( _
-      byval x as single, _
-      byval start1 as single, _
-      byval end1 as single, _
-      byval start2 as single, _
-      byval end2 as single ) _
+    x as single, start1 as single, end1 as single, start2 as single, end2 as single ) _
     as single
     
     return( ( x - start1 ) * ( end2 - start2 ) / ( end1 - start1 ) + start2 )
@@ -188,11 +138,7 @@ namespace Noise
    
     -1 .. 1 range
   '/
-  private function smoothedNoise( _
-      byval x as single, _
-      byval y as single ) _
-    as single
-    
+  private function smoothedNoise( x as single, y as single ) as single
     dim as single _
       fractX = x - int( x ), _
       fractY = y - int( y )
@@ -215,19 +161,14 @@ namespace Noise
    
     -1 .. 1 range
   '/
-  private function turbulence( _
-      byval x as single, _
-      byval y as single, _
-      byval size as single ) _
-    as single
-    
+  private function turbulence( x as single, y as single, size as single ) as single
     dim as single _
       value = 0.0f, _
       initialSize = size
     
     do while( size >= 1.0f )
       value += smoothedNoise( x / size, y / size ) * size
-      size /= 2.0f
+      size *= 0.5f
     loop
     
     value = value / initialSize
@@ -239,10 +180,7 @@ namespace Noise
     Worley noise euclidean distance function
   '/
   private function wn_dist_euclidean( _
-      byval x1 as single, _
-      byval y1 as single, _
-      byval x2 as single, _
-      byval y2 as single ) _
+      x1 as single, y1 as single, x2 as single, y2 as single ) _
     as single
     
     return( sqr( ( x1 - x2 ) ^ 2 + ( y1 - y2 ) ^ 2 ) )
@@ -252,10 +190,7 @@ namespace Noise
     Worley noise Manhattan distance function
   '/
   private function wn_dist_manhattan( _
-      byval x1 as single, _
-      byval y1 as single, _
-      byval x2 as single, _
-      byval y2 as single ) _
+      x1 as single, y1 as single, x2 as single, y2 as single ) _
     as single
     
     return( abs( x1 - x2 ) + abs( y1 - y2 ) )
@@ -265,10 +200,7 @@ namespace Noise
     Worley noise squared distance function
   '/
   private function wn_dist_squared( _
-      byval x1 as single, _
-      byval y1 as single, _
-      byval x2 as single, _
-      byval y2 as single ) _
+      x1 as single, y1 as single, x2 as single, y2 as single ) _
     as single
     
     return( fMax( abs( ( x1 - x2 ) ), abs( ( y1 - y2 ) ) ) )
@@ -278,90 +210,63 @@ namespace Noise
     Worley noise result combinator functions
   '/
   private function wn_result_1( _
-      byval F as single, _
-      byval S as single, _
-      byval T as single, _
-      byval correction as single ) _
+      F as single, S as single, T as single, correction as single ) _
     as single
     
     return( ( F ^ 2 ) / ( S * T ) )
   end function
   
   private function wn_result_2( _
-      byval F as single, _
-      byval S as single, _
-      byval T as single, _
-      byval correction as single ) _
+      F as single, S as single, T as single, correction as single ) _
     as single
     
     return( F / correction )
   end function
   
   private function wn_result_3( _
-      byval F as single, _
-      byval S as single, _
-      byval T as single, _
-      byval correction as single ) _
+      F as single, S as single, T as single, correction as single ) _
     as single
     
     return( S / correction )
   end function
   
   private function wn_result_4( _
-      byval F as single, _
-      byval S as single, _
-      byval T as single, _
-      byval correction as single ) _
+      F as single, S as single, T as single, correction as single ) _
     as single
     
     return( T / correction )
   end function
   
   private function wn_result_5( _
-      byval F as single, _
-      byval S as single, _
-      byval T as single, _
-      byval correction as single ) _
+      F as single, S as single, T as single, correction as single ) _
     as single
     
     return( 2.0f * F / ( S + T ) )
   end function
   
   private function wn_result_6( _
-      byval F as single, _
-      byval S as single, _
-      byval T as single, _
-      byval correction as single ) _
+      F as single, S as single, T as single, correction as single ) _
     as single
     
     return( F / S )
   end function
   
   private function wn_result_7( _
-      byval F as single, _
-      byval S as single, _
-      byval T as single, _
-      byval correction as single ) _
+      F as single, S as single, T as single, correction as single ) _
     as single
     
     return( ( S - F ) / correction )
   end function
   
   private function wn_result_8( _
-      byval F as single, _
-      byval S as single, _
-      byval T as single, _
-      byval correction as single ) _
+      F as single, S as single, T as single, correction as single ) _
     as single
     
     return( ( T - F ) / correction )
   end function
   
   private function wn_result_9( _
-      byval F as single, _
-      byval S as single, _
-      byval T as single, _
-      byval correction as single ) _
+      F as single, S as single, T as single, correction as single ) _
     as single
     
     return( ( T - S ) / correction )
@@ -373,23 +278,17 @@ namespace Noise
     0 .. 1 range
   '/
   private function worley( _
-      byval x as integer, _
-      byval y as integer, _
-      byval size as integer, _
-      byval cellSize as single, _
-      byval distanceFunc as function( _
-        byval as single, _
-        byval as single, _
-        byval as single, _
-        byval as single ) as single = _
+      x as integer, _
+      y as integer, _
+      size as integer, _
+      cellSize as single, _
+      distanceFunc as function( _
+        as single, as single, as single, as single ) as single = _
         @wn_dist_euclidean, _
-      byval resultFunc as function( _
-        byval as single, _
-        byval as single, _
-        byval as single, _
-        byval as single ) as single = _
+      resultFunc as function( _
+        as single, as single, as single, as single ) as single = _
         @wn_result_1, _
-      byval correction as single = 1.0 ) _
+      correction as single = 1.0 ) _
     as single
     
     dim as single _
@@ -443,11 +342,7 @@ namespace Noise
     SN_G2 = ( 3.0f - sqr( 3.0f ) ) / 6.0f, _
     SN_G22 = SN_G2 + SN_G2
   
-  private function simplex( _
-      byval x as single, _
-      byval y as single ) _
-    as single
-    
+  private function simplex( x as single, y as single ) as single
     dim as single s = ( x + y ) * SN_F2
     dim as integer _
       i = int( x + s ), _
@@ -518,11 +413,11 @@ namespace Noise
     -1 .. 1 range
   '/
   private function sinePattern( _
-      byval x as single, _
-      byval y as single, _
-      byval size as single, _
-      byval xPeriod as single, _
-      byval yPeriod as single ) _
+      x as single, _
+      y as single, _
+      size as single, _
+      xPeriod as single, _
+      yPeriod as single ) _
     as single
     
     return( sin( ( x * xPeriod / size + y * yPeriod / size ) ) )
@@ -534,13 +429,13 @@ namespace Noise
     0 .. 1 range
   '/
   private function circularSinePattern( _
-      byval x as single, _
-      byval y as single, _
-      byval size as single, _
-      byval period as single, _
-      byval centerX as single = 0.0f, _
-      byval centerY as single = 0.0f, _
-      byval bias as single = 0.0f ) _
+      x as single, _
+      y as single, _
+      size as single, _
+      period as single, _
+      centerX as single = 0.0f, _
+      centerY as single = 0.0f, _
+      bias as single = 0.0f ) _
     as single
     
     dim as single _
@@ -557,13 +452,13 @@ namespace Noise
     0 .. 1 range
   '/
   private function blobbyPattern( _
-      byval x as single, _
-      byval y as single, _
-      byval size as single, _
-      byval xPeriod as single, _
-      byval yPeriod as single, _
-      byval xDisp as single = 0.0f, _
-      byval yDisp as single = 0.0f ) _
+      x as single, _
+      y as single, _
+      size as single, _
+      xPeriod as single, _
+      yPeriod as single, _
+      xDisp as single = 0.0f, _
+      yDisp as single = 0.0f ) _
     as single
     
     return( abs( _
@@ -577,10 +472,7 @@ namespace Noise
     0 .. 1 range (either one or the other)
   '/
   private function checkerPattern( _
-      byval x as single, _
-      byval y as single, _
-      byval sizeX as single, _
-      byval sizeY as single ) _
+      x as single, y as single, sizeX as single, sizeY as single ) _
     as single
     
     return( iif( ( _
