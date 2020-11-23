@@ -63,8 +63,7 @@ namespace Noise
   '/
   private function noise2( x as integer, y as integer ) as single
     dim as integer _
-      n = x + y * 57
-      n = ( n shl 13 ) xor n
+      n = x + y * 57 : n = ( n shl 13 ) xor n
     
     return( ( 1.0f - ( ( n * ( n * n * 15731 + 789221 ) + _
       1376312589 ) and &h7fffffff ) / 1073741824.0f ) )   
