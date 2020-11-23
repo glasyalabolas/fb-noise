@@ -35,7 +35,7 @@ All the noise functions return values either in the [0..1] or [-1..1] ranges. Th
 
 `value = Noise.simplex( x, y )`
 
-### Worley noise
+### Worley noise (aka 'Voronoi map')
 <a href="http://imgbox.com/GQOrJREU" target="_blank"><img src="https://thumbs2.imgbox.com/0c/b6/GQOrJREU_t.png" alt="imgbox"/></a>
 
 `value = Noise.worley( x, y, size, cellSize, distanceFunction, resultFunction, correction )`
